@@ -1,0 +1,40 @@
+runner:
+  total_steps: 150000
+  gradient_clipping: 1
+  gradient_accumulate_steps: 8
+
+  log_step: 1000
+  eval_step: 12500
+  save_step: 12500
+  max_keep: 1
+  eval_dataloaders:
+    - dev
+
+optimizer:
+  name: TorchOptim
+  torch_optim_name: Adam
+  lr: 1.0e-4
+
+downstream_expert:
+  datarc:
+    train: ['train']
+    dev: ['validation_mismatched']
+    test: ['test_mismatched']
+    num_workers: 12
+    train_batch_size: 4
+    eval_batch_size: 4
+    speechglue_task: 'mnli'
+    speechglue_root: './dump'
+
+  modelrc:
+    projector_dim: 256
+    select: UtteranceLevel
+    tanh_normalization: True
+    dropout: 0.1
+
+    UtteranceLevel:
+      pooling: MeanPooling
+
+    SequenceClassifierWithDropout:
+      dropout: 0.1
+      pooling_dim: 256
